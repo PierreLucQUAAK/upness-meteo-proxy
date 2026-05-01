@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "name": "upness-meteo-proxy",
+  "functions": {
+    "api/forecast.js": {
+      "memory": 128,
+      "maxDuration": 15
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
+    }
+  ]
+}
