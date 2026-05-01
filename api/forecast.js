@@ -1,4 +1,4 @@
-// api/forecast.js — v3 CommonJS, compatible Vercel Node 18
+// api/forecast.js — v4 : api.met.no (même service que YR.no, URL différente)
 const https = require('https');
 
 module.exports = async function handler(req, res) {
@@ -15,7 +15,6 @@ module.exports = async function handler(req, res) {
   const lonF = parseFloat(lon);
   if (isNaN(latF) || isNaN(lonF)) return res.status(400).json({ error: 'Coordonnées invalides' });
 
-  // ── Fetch via https natif Node (pas de fetch API) ─────────────
   function httpsGet(url, headers) {
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => reject(new Error('Timeout 10s')), 10000);
@@ -35,8 +34,8 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  // ── YR.no ─────────────────────────────────────────────────────
-  const yrUrl = 'https://api.yr.no/weatherapi/locationforecast/2.0/compact'
+  // ── YR.no via api.met.no (URL institutionnelle, moins filtrée) ──
+  const yrUrl = 'https://api.met.no/weatherapi/locationforecast/2.0/compact'
     + '?lat=' + latF.toFixed(4) + '&lon=' + lonF.toFixed(4);
 
   try {
@@ -46,7 +45,7 @@ module.exports = async function handler(req, res) {
     });
     return res.status(200).json({ source: 'yr.no', data });
   } catch (err) {
-    console.error('YR.no KO:', err.message);
+    console.error('api.met.no KO:', err.message);
   }
 
   // ── Fallback Open-Meteo ───────────────────────────────────────
